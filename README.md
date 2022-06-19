@@ -36,6 +36,13 @@ bash run.sh
 | MCTformer-V1 | DeiT-small | [Weights](https://drive.google.com/file/d/1jLnSbR2DDtjli5EwRYSDi3Xa6xxFIAi0/view?usp=sharing)  |
 | MCTformer-V2 | DeiT-small | [Weights](https://drive.google.com/file/d/1w5LDoS_CHtDRXgFSqFtPvIiCajk4ZtMB/view?usp=sharing)  |
 
+[PSA](https://github.com/jiwoon-ahn/psa) was used to post-process the seeds (i.e., class-specific localization maps) to generate pseudo ground-truth segmentation masks.
+
+
+## TODO
+- [ ] Segmentation part
+
+
 ## Contact
 If you have any questions, you can either create issues or contact me by email
 [lian.xu@uwa.edu.au](lian.xu@uwa.edu.au)
