@@ -4,10 +4,18 @@ The pytorch code for our CVPR2022 paper [Multi-class Token Transformer for Weakl
 <p align="left">
   <img src="MCTformer-V1.png" width="720" title="Overview of MCTformer-V1" >
 </p>
+<p align = "center">
+Fig.1 - Overview of MCTformer-V1
+</p>
 
 <p align="left">
   <img src="MCTformer-V2.png" width="720" title="Overview of MCTformer-V2" >
 </p>
+<p align = "center">
+Fig.2 - Overview of MCTformer-V2
+</p>
+
+
 
 ## Prerequisite
 - Ubuntu 18.04, with Python 3.6 and the following python dependencies.
