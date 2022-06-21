@@ -1,18 +1,11 @@
 # MCTformer
 The pytorch code for our CVPR2022 paper [Multi-class Token Transformer for Weakly Supervised Semantic Segmentation](https://arxiv.org/abs/2203.02891).
 
-<p align="left">
+<p align="center">
   <img src="MCTformer-V1.png" width="720" title="Overview of MCTformer-V1" >
 </p>
 <p align = "center">
-Fig.1 - Overview of MCTformer-V1
-</p>
-
-<p align="left">
-  <img src="MCTformer-V2.png" width="720" title="Overview of MCTformer-V2" >
-</p>
-<p align = "center">
-Fig.2 - Overview of MCTformer-V2
+Fig.1 - Overview of MCTformer
 </p>
 
 
