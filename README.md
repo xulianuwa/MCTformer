@@ -34,8 +34,7 @@ bash run.sh
 [PSA](https://github.com/jiwoon-ahn/psa) was used to post-process the seeds (i.e., class-specific localization maps) to generate pseudo ground-truth segmentation masks.
 
 
-## TODO
-- [ ] Segmentation part
+For the segmentation part, run the run_seg.sh script for training and testing segmentation models. When training on VOC, the model was initialized with the pre-trained classification [weights](https://drive.google.com/file/d/1xESB7017zlZHqxEWuh1Rb89UhjTGIKOA/view?usp=sharing) on VOC.
 
 
 ## Contact
