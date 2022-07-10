@@ -35,7 +35,9 @@ bash run.sh
 
 
 For the segmentation part, run the run_seg.sh script for training and testing segmentation models. When training on VOC, the model was initialized with the pre-trained classification [weights](https://drive.google.com/file/d/1xESB7017zlZHqxEWuh1Rb89UhjTGIKOA/view?usp=sharing) on VOC.
-
+```
+bash run_seg.sh
+```
 
 ## Contact
 If you have any questions, you can either create issues or contact me by email
