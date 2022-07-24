@@ -138,6 +138,10 @@ def get_args_parser():
     parser.add_argument('--label-file-path', type=str, default=None)
     parser.add_argument('--attention-type', type=str, default='fused')
 
+    parser.add_argument('--out-crf', type=str, default=None)
+    parser.add_argument("--low_alpha", default=1, type=int)
+    parser.add_argument("--high_alpha", default=12, type=int)
+
     return parser
 
 

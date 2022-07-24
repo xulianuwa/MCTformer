@@ -207,9 +207,34 @@ def generate_attention_maps_ms(data_loader, model, device, args):
                     if args.cam_npy_dir is not None:
                         np.save(os.path.join(args.cam_npy_dir, img_name + '.npy'), cam_dict)
 
+                    if args.out_crf is not None:
+                        for t in [args.low_alpha, args.high_alpha]:
+                            orig_image = orig_images[b].astype(np.uint8).copy(order='C')
+                            crf = _crf_with_alpha(cam_dict, t, orig_image)
+                            folder = args.out_crf + ('_%s' % t)
+                            if not os.path.exists(folder):
+                                os.makedirs(folder)
+                            np.save(os.path.join(folder, img_name + '.npy'), crf)
+
     # gather the stats from all processes
     metric_logger.synchronize_between_processes()
     return
+
+
+def _crf_with_alpha(cam_dict, alpha, orig_img):
+    from psa.tool.imutils import crf_inference
+    v = np.array(list(cam_dict.values()))
+    bg_score = np.power(1 - np.max(v, axis=0, keepdims=True), alpha)
+    bgcam_score = np.concatenate((bg_score, v), axis=0)
+    crf_score = crf_inference(orig_img, bgcam_score, labels=bgcam_score.shape[0])
+
+    n_crf_al = dict()
+
+    n_crf_al[0] = crf_score[0]
+    for i, key in enumerate(cam_dict.keys()):
+        n_crf_al[key + 1] = crf_score[i + 1]
+
+    return n_crf_al
 
 
 def show_cam_on_image(img, mask, save_path):
