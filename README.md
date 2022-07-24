@@ -20,7 +20,7 @@ pip install -r prerequisite.txt
 - Download [the PASCAL VOC 2012 development kit](http://host.robots.ox.ac.uk/pascal/VOC/voc2012).
 
 ## Usage
-Run the run.sh script for training MCTformer, visualizing and evaluating the generated class-specific localization maps. 
+Step 1: Run the run.sh script for training MCTformer, visualizing and evaluating the generated class-specific localization maps. 
 ```
 bash run.sh
 ```
@@ -31,10 +31,13 @@ bash run.sh
 | MCTformer-V1 | DeiT-small | [Weights](https://drive.google.com/file/d/1jLnSbR2DDtjli5EwRYSDi3Xa6xxFIAi0/view?usp=sharing)  |
 | MCTformer-V2 | DeiT-small | [Weights](https://drive.google.com/file/d/1w5LDoS_CHtDRXgFSqFtPvIiCajk4ZtMB/view?usp=sharing)  |
 
-[PSA](https://github.com/jiwoon-ahn/psa) was used to post-process the seeds (i.e., class-specific localization maps) to generate pseudo ground-truth segmentation masks.
+Step 2: Run the run_psa.sh script for using [PSA](https://github.com/jiwoon-ahn/psa) to post-process the seeds (i.e., class-specific localization maps) to generate pseudo ground-truth segmentation masks. To train PSA, the pre-trained classification [weights](https://drive.google.com/file/d/1xESB7017zlZHqxEWuh1Rb89UhjTGIKOA/view?usp=sharing) were used for initialization.
+```
+bash run_psa.sh
+```
 
 
-For the segmentation part, run the run_seg.sh script for training and testing the segmentation model. When training on VOC, the model was initialized with the pre-trained classification [weights](https://drive.google.com/file/d/1xESB7017zlZHqxEWuh1Rb89UhjTGIKOA/view?usp=sharing) on VOC.
+Step 3: For the segmentation part, run the run_seg.sh script for training and testing the segmentation model. When training on VOC, the model was initialized with the pre-trained classification [weights](https://drive.google.com/file/d/1xESB7017zlZHqxEWuh1Rb89UhjTGIKOA/view?usp=sharing) on VOC.
 ```
 bash run_seg.sh
 ```
