@@ -150,6 +150,8 @@ def main(args):
     print(args)
 
     device = torch.device(args.device)
+    torch.manual_seed(0) 
+    np.random.seed(0)
     cudnn.benchmark = True
 
     dataset_train, args.nb_classes = build_dataset(is_train=True, args=args)
