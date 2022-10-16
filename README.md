@@ -42,6 +42,11 @@ Step 3: For the segmentation part, run the run_seg.sh script for training and te
 bash run_seg.sh
 ```
 
+### MS COCO 2014 dataset
+Run run_coco.sh for training MCTformer and generating class-specific localization maps. The class label numpy file can be download [here](https://drive.google.com/file/d/1_X0vzP4q8xth3tVSR_-uOePBQq9vQLUS/view?usp=sharing). The trained MCTformer-V2 model is [here](https://drive.google.com/file/d/1PnpQWdDvyezzN89LdTHRHE0IZqVG2USh/view?usp=sharing).
+```
+bash run_coco.sh
+```
 ## Contact
 If you have any questions, you can either create issues or contact me by email
 [lian.xu@uwa.edu.au](lian.xu@uwa.edu.au)
