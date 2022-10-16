@@ -153,8 +153,6 @@ class VOC12DatasetMS(Dataset):
         msf_img_list = []
         for i in range(len(ms_img_list)):
             msf_img_list.append(ms_img_list[i])
-
-            # msf_img_list.append(np.flip(ms_img_list[i], -1).copy())
             msf_img_list.append(torch.flip(ms_img_list[i], [-1]))
         return msf_img_list, label
 
