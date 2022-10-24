@@ -15,7 +15,7 @@ Fig.1 - Overview of MCTformer
 ## Prerequisite
 - Ubuntu 18.04, with Python 3.6 and the following python dependencies.
 ```
-pip install -r prerequisite.txt
+pip install -r requirements.txt
 ```
 - Download [the PASCAL VOC 2012 development kit](http://host.robots.ox.ac.uk/pascal/VOC/voc2012).
 
