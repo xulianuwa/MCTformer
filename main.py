@@ -16,6 +16,8 @@ from datasets import build_dataset
 from engine import train_one_epoch, evaluate, generate_attention_maps_ms
 import models
 import utils
+import random
+import numpy as np
 
 
 def get_args_parser():
@@ -144,14 +146,22 @@ def get_args_parser():
 
     return parser
 
+def same_seeds(seed):
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+      torch.cuda.manual_seed(seed)
+      torch.cuda.manual_seed_all(seed)
+    np.random.seed(seed)
+    random.seed(seed)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
 
 def main(args):
 
     print(args)
 
     device = torch.device(args.device)
-    torch.manual_seed(0) 
-    np.random.seed(0)
+    same_seeds(0)
     cudnn.benchmark = True
 
     dataset_train, args.nb_classes = build_dataset(is_train=True, args=args)
