@@ -104,12 +104,12 @@ def get_args_parser():
     parser.add_argument('--finetune', default='', help='finetune from checkpoint')
 
     # Dataset parameters
-    parser.add_argument('--data-path', default='', type=str, help='dataset path')
-    parser.add_argument('--img-list', default='', type=str, help='image list path')
-    parser.add_argument('--data-set', default='', type=str, help='dataset')
+    parser.add_argument('--data-path', default='VOCdevkit/VOC2012', type=str, help='dataset path')
+    parser.add_argument('--img-list', default='voc12', type=str, help='image list path')
+    parser.add_argument('--data-set', default='VOC12', type=str, help='dataset')
 
 
-    parser.add_argument('--output_dir', default='',
+    parser.add_argument('--output_dir', default='saved_model',
                         help='path where to save, empty for no saving')
     parser.add_argument('--device', default='cuda',
                         help='device to use for training / testing')
@@ -126,17 +126,17 @@ def get_args_parser():
 
 
     # generating attention maps
-    parser.add_argument('--gen_attention_maps', action='store_true')
+    parser.add_argument('--gen_attention_maps', type=bool, default=True)
     parser.add_argument('--patch-size', type=int, default=16)
-    parser.add_argument('--attention-dir', type=str, default=None)
+    parser.add_argument('--attention-dir', type=str, default='cam-png')
     parser.add_argument('--layer-index', type=int, default=12, help='extract attention maps from the last layers')
 
-    parser.add_argument('--patch-attn-refine', action='store_true')
-    parser.add_argument('--visualize-cls-attn', action='store_true')
+    parser.add_argument('--patch-attn-refine', type=bool, default=True)
+    parser.add_argument('--visualize-cls-attn', type=bool, default=True)
 
     parser.add_argument('--gt-dir', type=str, default=None)
-    parser.add_argument('--cam-npy-dir', type=str, default=None)
-    parser.add_argument("--scales", nargs='+', type=float)
+    parser.add_argument('--cam-npy-dir', type=str, default='cam-npy')
+    parser.add_argument("--scales", nargs='+', type=float, default=[1.0,0.75,1.25])
     parser.add_argument('--label-file-path', type=str, default=None)
     parser.add_argument('--attention-type', type=str, default='fused')
 
