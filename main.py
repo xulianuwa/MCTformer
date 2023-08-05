@@ -16,19 +16,19 @@ from datasets import build_dataset
 from engine import train_one_epoch, evaluate, generate_attention_maps_ms
 import models
 import utils
-import random
+import os
 import numpy as np
-
+import random
 
 def get_args_parser():
     parser = argparse.ArgumentParser('DeiT training and evaluation script', add_help=False)
-    parser.add_argument('--batch-size', default=64, type=int)
-    parser.add_argument('--epochs', default=60, type=int)
+    parser.add_argument('--batch-size', default=32, type=int)
+    parser.add_argument('--epochs', default=45, type=int)
 
     # Model parameters
-    parser.add_argument('--model', default='deit_base_patch16_224', type=str, metavar='MODEL',
+    parser.add_argument('--model', default='deit_small_MCTformerPlus', type=str, metavar='MODEL',
                         help='Name of model to train')
-    parser.add_argument('--input-size', default=224, type=int, help='images input size')
+    parser.add_argument('--input-size', default=448, type=int, help='images input size')
 
     parser.add_argument('--drop', type=float, default=0.0, metavar='PCT',
                         help='Dropout rate (default: 0.)')
@@ -140,29 +140,45 @@ def get_args_parser():
     parser.add_argument('--label-file-path', type=str, default=None)
     parser.add_argument('--attention-type', type=str, default='fused')
 
-    parser.add_argument('--out-crf', type=str, default=None)
-    parser.add_argument("--low_alpha", default=1, type=int)
-    parser.add_argument("--high_alpha", default=12, type=int)
+
+    parser.add_argument('--seed', default=0, type=int)
+
+    parser.add_argument("--loss-weight", default=1.0, type=float)
+    parser.add_argument("--num-cct", default=12, type=int)
 
     return parser
+
 
 def same_seeds(seed):
     torch.manual_seed(seed)
     if torch.cuda.is_available():
-      torch.cuda.manual_seed(seed)
-      torch.cuda.manual_seed_all(seed)
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
     np.random.seed(seed)
     random.seed(seed)
     torch.backends.cudnn.benchmark = False
     torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.enabled = False
+
 
 def main(args):
 
     print(args)
 
     device = torch.device(args.device)
-    same_seeds(0)
-    cudnn.benchmark = True
+
+    # same_seeds(0)
+    seed = args.seed
+    # cudnn.benchmark = True
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+    np.random.seed(seed)
+    random.seed(seed)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.enabled = False
 
     dataset_train, args.nb_classes = build_dataset(is_train=True, args=args)
     dataset_train_, args.nb_classes = build_dataset(is_train=False, gen_attn=True, args=args)
@@ -172,7 +188,8 @@ def main(args):
     sampler_val = torch.utils.data.SequentialSampler(dataset_val)
 
     data_loader_train = torch.utils.data.DataLoader(
-        dataset_train, sampler=sampler_train,
+        dataset_train,
+        sampler=sampler_train,
         batch_size=args.batch_size,
         num_workers=args.num_workers,
         pin_memory=args.pin_mem,
@@ -203,7 +220,8 @@ def main(args):
         num_classes=args.nb_classes,
         drop_rate=args.drop,
         drop_path_rate=args.drop_path,
-        drop_block_rate=None
+        drop_block_rate=None,
+        input_size=args.input_size
     )
 
 
@@ -235,20 +253,19 @@ def main(args):
 
         orig_size = int((pos_embed_checkpoint.shape[-2] - num_extra_tokens) ** 0.5)
 
-        new_size = int(num_patches ** 0.5)
-
         if args.finetune.startswith('https') and 'MCTformer' in args.model:
             extra_tokens = pos_embed_checkpoint[:, :num_extra_tokens].repeat(1,args.nb_classes,1)
         else:
             extra_tokens = pos_embed_checkpoint[:, :num_extra_tokens]
 
         pos_tokens = pos_embed_checkpoint[:, num_extra_tokens:]
+
         pos_tokens = pos_tokens.reshape(-1, orig_size, orig_size, embedding_size).permute(0, 3, 1, 2)
-        pos_tokens = torch.nn.functional.interpolate(
-            pos_tokens, size=(new_size, new_size), mode='bicubic', align_corners=False)
+        pos_tokens = pos_tokens[:, :, :, None, :, None].expand(-1, -1, -1, 2, -1, 2).reshape(pos_tokens.size(0), pos_tokens.size(1), pos_tokens.size(2)*2, pos_tokens.size(3) *2)
         pos_tokens = pos_tokens.permute(0, 2, 3, 1).flatten(1, 2)
-        new_pos_embed = torch.cat((extra_tokens, pos_tokens), dim=1)
-        checkpoint_model['pos_embed'] = new_pos_embed
+
+        checkpoint_model['pos_embed_cls'] = extra_tokens
+        checkpoint_model['pos_embed_pat'] = pos_tokens
 
         if args.finetune.startswith('https') and 'MCTformer' in args.model:
             cls_token_checkpoint = checkpoint_model['cls_token']
@@ -284,30 +301,27 @@ def main(args):
 
     print(f"Start training for {args.epochs} epochs")
     start_time = time.time()
-    max_accuracy = 0.0
 
     for epoch in range(args.start_epoch, args.epochs):
 
         train_stats = train_one_epoch(
             model, data_loader_train,
             optimizer, device, epoch, loss_scaler,
-            args.clip_grad
+            args.clip_grad,
+            args=args
         )
 
         lr_scheduler.step(epoch)
 
         test_stats = evaluate(data_loader_val, model, device)
-        print(f"mAP of the network on the {len(dataset_val)} test images: {test_stats['mAP']*100:.1f}%")
-        if test_stats["mAP"] > max_accuracy and args.output_dir:
-            checkpoint_paths = [output_dir / 'checkpoint_best.pth']
+
+        if args.output_dir:
+            checkpoint_paths = [output_dir / 'checkpoint.pth']
             for checkpoint_path in checkpoint_paths:
-                torch.save({
-                    'model': model.state_dict()
+                utils.save_on_master({
+                    'model': model.state_dict(),
+                    'epoch': epoch,
                 }, checkpoint_path)
-
-        max_accuracy = max(max_accuracy, test_stats["mAP"])
-        print(f'Max mAP: {max_accuracy * 100:.2f}%')
-
 
         log_stats = {**{f'train_{k}': v for k, v in train_stats.items()},
                      **{f'test_{k}': v for k, v in test_stats.items()},
