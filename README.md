@@ -1,5 +1,5 @@
-# MCTformer
-The pytorch code for our CVPR2022 paper [Multi-class Token Transformer for Weakly Supervised Semantic Segmentation](https://arxiv.org/abs/2203.02891).
+# MCTformer (CVPR2022)
+[Multi-class Token Transformer for Weakly Supervised Semantic Segmentation](https://arxiv.org/abs/2203.02891).
 
 [[Paper]](https://arxiv.org/abs/2203.02891) [[Project Page]](https://xulianuwa.github.io/MCTformer-project-page/)
 
@@ -10,16 +10,59 @@ The pytorch code for our CVPR2022 paper [Multi-class Token Transformer for Weakl
 Fig.1 - Overview of MCTformer
 </p>
 
+# :triangular_flag_on_post: **Updates** 
+2023-08-08: MCTformer+ on [Arxiv](https://arxiv.org/pdf/2308.03005.pdf)
 
 
-## Prerequisite
+## Environment Setup
 - Ubuntu 18.04, with Python 3.6 and the following python dependencies.
 ```
 pip install -r requirements.txt
 ```
+## Data Preparation 
+<details>
+<summary>
+PASCAL VOC 2012
+</summary>
+
 - Download [the PASCAL VOC 2012 development kit](http://host.robots.ox.ac.uk/pascal/VOC/voc2012).
+  ``` bash
+  wget http://host.robots.ox.ac.uk/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar
+  tar –xvf VOCtrainval_11-May-2012.tar
+  ```
+- Download augmented annoations `SegmentationClassAug.zip` from [SBD dataset](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=6126343&casa_token=cOQGLW2KWqUAAAAA:Z-QHpQPf8Pnb07A75yBm2muYjqJwYUYPFbwwxMFHRcjRX0zl45kEGNqyTEPH7irB2QbabZbn&tag=1) via this [link](https://www.dropbox.com/s/oeu149j8qtbs1x0/SegmentationClassAug.zip?dl=0).
+- Make your data directory like this below
+  ``` bash
+  VOCdevkit/
+  └── VOC2012
+      ├── Annotations
+      ├── ImageSets
+      ├── JPEGImages
+      ├── SegmentationClass
+      ├── SegmentationClassAug
+      └── SegmentationObject
+    ```
+
+  </details>
+
+  <details>
+  <summary>
+  MS COCO 2014
+  </summary>
+  
+  #### 1. Download
+  ``` bash
+  wget http://images.cocodataset.org/zips/train2014.zip
+  wget http://images.cocodataset.org/zips/val2014.zip
+  ```
+  </details>
 
 ## Usage
+
+### Training MCTformer+
+```
+bash run_mct_plus.sh
+```
 Step 1: Run the run.sh script for training MCTformer, visualizing and evaluating the generated class-specific localization maps. 
 ```
 bash run.sh
