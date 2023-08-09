@@ -59,7 +59,7 @@ PASCAL VOC 2012
 
 ## Usage
 
-### Training MCTformer+
+### Train MCTformer+
 ```
 bash run_mct_plus.sh
 ```
