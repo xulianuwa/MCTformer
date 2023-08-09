@@ -50,12 +50,12 @@ PASCAL VOC 2012
   MS COCO 2014
   </summary>
   
-  #### 1. Download
-  ``` bash
-  wget http://images.cocodataset.org/zips/train2014.zip
-  wget http://images.cocodataset.org/zips/val2014.zip
-  ```
-  </details>
+  - Download [MS COCO 2014 dataset](https://cocodataset.org/#home)
+    ``` bash
+    wget http://images.cocodataset.org/zips/train2014.zip
+    wget http://images.cocodataset.org/zips/val2014.zip
+    ```
+    </details>
 
 ## Usage
 
