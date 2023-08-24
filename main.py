@@ -126,7 +126,7 @@ def get_args_parser():
 
 
     # generating attention maps
-    parser.add_argument('--gen_attention_maps', type=bool, default=True)
+    parser.add_argument('--gen_attention_maps', default=False, action='store_true')
     parser.add_argument('--patch-size', type=int, default=16)
     parser.add_argument('--attention-dir', type=str, default='cam-png')
     parser.add_argument('--layer-index', type=int, default=12, help='extract attention maps from the last layers')
